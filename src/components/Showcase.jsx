@@ -1,14 +1,13 @@
 import React from 'react'
 import { handleTilt, resetTilt } from '../hooks/useInteractions'
 import { SectionHead } from './Features'
+import { VIDEO_URL as VIDEO_SRC } from '../config/media'
 
 const PROJECTS = [
   { tag: 'Motion', title: 'Cosmic Journey', img: 'https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800' },
   { tag: 'Brand', title: 'Neon Pulse', img: 'https://images.unsplash.com/photo-1635322966219-b75ed372eb01?w=800' },
   { tag: 'Product', title: 'Glass Dimension', img: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800' },
 ]
-
-const VIDEO_SRC = '/video/Video 2.mp4'
 
 const VideoCube = () => (
   <div className="showcase-stage reveal mx-auto mb-16 max-w-3xl h-[340px] md:h-[420px] flex items-center justify-center [perspective:1200px]">

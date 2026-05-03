@@ -22,8 +22,7 @@ export function useLenis() {
     gsap.ticker.add(raf)
     gsap.ticker.lagSmoothing(0)
 
-    // После монтирования компонентов — refresh ScrollTrigger чтобы
-    // правильно посчитать позиции всех триггеров
+ 
     const refresh = () => ScrollTrigger.refresh()
     const t1 = setTimeout(refresh, 300)
     const t2 = setTimeout(refresh, 1500)

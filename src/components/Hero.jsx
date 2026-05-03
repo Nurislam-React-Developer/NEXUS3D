@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { VIDEO_URL } from '../config/media'
 
 const Hero = () => {
   const videoRef = useRef(null)
@@ -47,7 +48,7 @@ const Hero = () => {
         <video
           ref={videoRef}
           className={`w-full h-full object-cover [filter:saturate(1.2)_contrast(1.1)_brightness(0.7)] transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
-          src="/video/Video 2.mp4"
+          src={VIDEO_URL}
           autoPlay
           loop
           muted
