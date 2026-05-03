@@ -16,7 +16,19 @@ const HorizontalGallery = () => {
   const trackRef = useRef(null)
   const progressRef = useRef(null)
   const [currentIdx, setCurrentIdx] = useState(0)
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 900
+  // Реактивное состояние мобильного режима — обновляется на resize
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia('(max-width: 899px), (pointer: coarse)').matches
+      : false
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 899px), (pointer: coarse)')
+    const handler = (e) => setIsMobile(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
 
   useEffect(() => {
     if (isMobile) return
@@ -26,55 +38,68 @@ const HorizontalGallery = () => {
       const section = sectionRef.current
       if (!track || !section) return
 
-      const getDistance = () => track.scrollWidth - window.innerWidth
+      // ScrollTrigger.matchMedia — автоматически активирует/деактивирует
+      // pin-анимацию когда меняется размер окна. Без него pin "залипает"
+      // если юзер ресайзит окно или открывает DevTools mobile mode.
+      const mm = gsap.matchMedia()
 
-      gsap.to(track, {
-        x: () => -getDistance(),
-        ease: 'none',
-        force3D: true,
-        scrollTrigger: {
-          trigger: section,
-          start: 'top top',
-          end: () => `+=${getDistance()}`,
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-          fastScrollEnd: true,
-          onUpdate: (self) => {
-            // Обновляем прогресс-бар
-            if (progressRef.current) {
-              progressRef.current.style.transform = `scaleX(${self.progress})`
-            }
-            // Обновляем номер текущего слайда
-            const idx = Math.min(IMAGES.length - 1, Math.floor(self.progress * IMAGES.length))
-            setCurrentIdx(idx)
+      mm.add('(min-width: 900px) and (hover: hover)', () => {
+        const getDistance = () => track.scrollWidth - window.innerWidth
+
+        const tween = gsap.to(track, {
+          x: () => -getDistance(),
+          ease: 'none',
+          force3D: true,
+          scrollTrigger: {
+            trigger: section,
+            start: 'top top',
+            end: () => `+=${getDistance()}`,
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            fastScrollEnd: true,
+            onUpdate: (self) => {
+              if (progressRef.current) {
+                progressRef.current.style.transform = `scaleX(${self.progress})`
+              }
+              const idx = Math.min(IMAGES.length - 1, Math.floor(self.progress * IMAGES.length))
+              setCurrentIdx(idx)
+            },
           },
-        },
+        })
+
+        return () => tween.kill()
       })
     }, sectionRef)
 
     return () => ctx.revert()
   }, [isMobile])
 
-  // Mobile fallback — обычная сетка без pin (тач-устройства не любят pin)
+  // ===== MOBILE — обычная сетка без pin =====
   if (isMobile) {
     return (
-      <section className="relative z-[2] px-6 py-16">
-        <div className="text-center mb-8">
+      <section className="relative z-[2] px-5 py-14">
+        <div className="text-center mb-7">
           <span className="pill">// галерея</span>
-          <h2 className="text-4xl font-extrabold mt-3">
+          <h2 className="text-3xl font-extrabold mt-3">
             Шесть <span className="gradient-text">миров</span>
           </h2>
         </div>
         <div className="grid grid-cols-2 gap-3">
           {IMAGES.map((img, i) => (
             <div key={i} className="relative aspect-[4/5] rounded-xl overflow-hidden border border-white/10">
-              <img src={img.url} alt={img.title} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+              <img
+                src={img.url}
+                alt={img.title}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-full object-cover [filter:saturate(1.2)_brightness(0.85)]"
+              />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               <div className="absolute bottom-2 left-2 right-2">
                 <span className="text-[9px] tracking-widest uppercase text-[color:var(--accent-3)]">{img.tag}</span>
-                <h3 className="text-base font-bold">{img.title}</h3>
+                <h3 className="text-base font-bold leading-tight mt-0.5">{img.title}</h3>
               </div>
             </div>
           ))}
@@ -83,9 +108,9 @@ const HorizontalGallery = () => {
     )
   }
 
+  // ===== DESKTOP — горизонтальный pin-скролл =====
   return (
     <section ref={sectionRef} className="relative z-[2] h-screen overflow-hidden">
-      {/* Заголовок поверх (sticky-стиль) */}
       <div className="absolute top-10 left-10 z-10 flex flex-col gap-3 pointer-events-none">
         <span className="pill pointer-events-auto">// галерея</span>
         <h2 className="text-4xl md:text-6xl font-extrabold max-w-xl leading-tight">
@@ -96,7 +121,6 @@ const HorizontalGallery = () => {
         </p>
       </div>
 
-      {/* Прогресс-бар внизу */}
       <div className="absolute bottom-8 left-10 right-10 z-10 flex items-center gap-4 pointer-events-none">
         <span className="text-sm text-white font-mono font-bold tabular-nums w-8">
           {String(currentIdx + 1).padStart(2, '0')}
