@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* Reset должен быть ВНУТРИ @layer base — иначе побеждает все Tailwind утилиты
+   (unlayered правила имеют приоритет над @layer в каскаде). */
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+}

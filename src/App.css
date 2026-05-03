@@ -1,0 +1,219 @@
+/* ===================================================================
+   Только то, что сложно/нельзя выразить в Tailwind:
+   CSS-переменные, @keyframes, 3D-трансформации, glitch-эффект, cube.
+   Всё остальное — в компонентах через tailwind-классы.
+   =================================================================== */
+
+:root {
+  --bg: #05030d;
+  --bg-2: #0a0618;
+  --fg: #eef0ff;
+  --muted: #9aa0c2;
+  --accent: #7c5cff;
+  --accent-2: #ff3ea5;
+  --accent-3: #00e0ff;
+}
+
+html, body, #root {
+  background: var(--bg);
+  color: var(--fg);
+}
+
+body {
+  font-family: 'Inter', 'SF Pro Display', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============ BACKGROUND GRID ============ */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(124,92,255,.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(124,92,255,.08) 1px, transparent 1px);
+  background-size: 60px 60px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+          mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  animation: gridShift 20s linear infinite;
+}
+@keyframes gridShift {
+  to { background-position: 60px 60px, 60px 60px; }
+}
+
+.bg-orb { transition: transform .4s cubic-bezier(.2,.8,.2,1); }
+@keyframes float1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(60px,80px)} }
+@keyframes float2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-80px,60px)} }
+@keyframes float3 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-60px)} }
+
+/* ============ REVEAL ============ */
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity .9s ease, transform .9s cubic-bezier(.2,.8,.2,1);
+}
+.reveal.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ============ LOGO 3D CUBE ============ */
+.logo-cube {
+  display: inline-block;
+  transform-style: preserve-3d;
+  animation: spinCube 6s linear infinite;
+}
+.logo-cube .face {
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  opacity: .85;
+  border: 1px solid rgba(255,255,255,.2);
+}
+.logo-cube .f1 { transform: rotateY(0deg) translateZ(14px); }
+.logo-cube .f2 { transform: rotateY(90deg) translateZ(14px); background: linear-gradient(135deg, var(--accent-2), var(--accent-3)); }
+.logo-cube .f3 { transform: rotateX(90deg) translateZ(14px); background: linear-gradient(135deg, var(--accent-3), var(--accent)); }
+@keyframes spinCube {
+  from { transform: rotateX(-20deg) rotateY(0deg); }
+  to   { transform: rotateX(-20deg) rotateY(360deg); }
+}
+
+/* ============ BUTTONS ============ */
+.btn-primary, .btn-ghost {
+  border: 0; cursor: pointer; padding: 12px 22px;
+  border-radius: 999px; font-weight: 600; font-size: 14px;
+  text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+  transition: transform .2s, box-shadow .3s, background .3s;
+}
+.btn-primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 10px 30px -10px var(--accent), 0 0 0 1px rgba(255,255,255,.08) inset;
+}
+.btn-primary:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 20px 50px -10px var(--accent-2);
+}
+.btn-ghost {
+  color: #fff;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.15);
+  backdrop-filter: blur(10px);
+}
+.btn-ghost:hover {
+  background: rgba(255,255,255,.1);
+  transform: translateY(-2px);
+}
+.big { padding: 16px 30px; font-size: 15px; }
+
+/* ============ PILL ============ */
+.pill {
+  display: inline-block; padding: 6px 14px; border-radius: 999px;
+  font-size: 12px; letter-spacing: 1px; text-transform: uppercase;
+  background: rgba(124,92,255,.15); border: 1px solid rgba(124,92,255,.4);
+  color: #cfc7ff;
+}
+
+/* ============ GRADIENT TEXT ============ */
+.gradient-text {
+  background: linear-gradient(135deg, #fff 0%, var(--accent-3) 30%, var(--accent) 60%, var(--accent-2) 100%);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+  background-size: 200% 200%;
+  animation: gradientShift 6s ease infinite;
+}
+@keyframes gradientShift {
+  0%,100% { background-position: 0% 50%; }
+  50%     { background-position: 100% 50%; }
+}
+
+/* ============ GLITCH ============ */
+.glitch { position: relative; color: #fff; display: inline-block; }
+.glitch::before, .glitch::after {
+  content: attr(data-text); position: absolute; inset: 0;
+}
+.glitch::before {
+  color: var(--accent-2); transform: translate(-2px, 0);
+  mix-blend-mode: screen; animation: glitch1 3s infinite steps(1);
+}
+.glitch::after {
+  color: var(--accent-3); transform: translate(2px, 0);
+  mix-blend-mode: screen; animation: glitch2 2.4s infinite steps(1);
+}
+@keyframes glitch1 {
+  0%,92%,100% { clip-path: inset(0 0 0 0); }
+  93% { clip-path: inset(20% 0 60% 0); }
+  96% { clip-path: inset(70% 0 10% 0); }
+}
+@keyframes glitch2 {
+  0%,92%,100% { clip-path: inset(0 0 0 0); }
+  94% { clip-path: inset(40% 0 30% 0); }
+  97% { clip-path: inset(10% 0 75% 0); }
+}
+
+/* ============ SCROLL HINT ============ */
+.scroll-hint { animation: bounce 2s ease-in-out infinite; }
+.scroll-hint span::before {
+  content: ''; position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 8px; background: #fff; border-radius: 2px;
+  animation: scrollDot 1.6s ease-in-out infinite;
+}
+@keyframes bounce {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%     { transform: translateX(-50%) translateY(-10px); }
+}
+@keyframes scrollDot {
+  0%   { opacity: 1; top: 6px; }
+  100% { opacity: 0; top: 20px; }
+}
+
+/* ============ FEATURE CARD ============ */
+.feature-card::before {
+  content: ''; position: absolute; inset: -1px; border-radius: 20px; padding: 1px;
+  background: linear-gradient(135deg, var(--glow), transparent 60%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  opacity: 0; transition: opacity .4s;
+  pointer-events: none;
+}
+.feature-card:hover::before { opacity: 1; }
+.feature-card:hover { box-shadow: 0 30px 60px -20px var(--glow); }
+.feature-shine {
+  position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.08) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform .8s;
+  pointer-events: none;
+}
+.feature-card:hover .feature-shine { transform: translateX(100%); }
+
+/* ============ 3D VIDEO CUBE ============ */
+.showcase-cube {
+  width: 320px; height: 320px;
+  animation: rotateCube 22s linear infinite;
+}
+@keyframes rotateCube {
+  0%   { transform: rotateX(-20deg) rotateY(0deg); }
+  100% { transform: rotateX(-20deg) rotateY(360deg); }
+}
+.cube-face {
+  position: absolute; width: 320px; height: 320px;
+  object-fit: cover;
+  border: 2px solid rgba(255,255,255,.12);
+  box-shadow: 0 0 40px rgba(124,92,255,.4), inset 0 0 40px rgba(255,62,165,.15);
+  filter: saturate(1.3) brightness(.9);
+}
+.cf-front  { transform: translateZ(160px); }
+.cf-back   { transform: rotateY(180deg) translateZ(160px); }
+.cf-right  { transform: rotateY(90deg)  translateZ(160px); }
+.cf-left   { transform: rotateY(-90deg) translateZ(160px); }
+.cf-top    { transform: rotateX(90deg)  translateZ(160px); }
+.cf-bottom { transform: rotateX(-90deg) translateZ(160px); }
+
+@media (max-width: 900px) {
+  .showcase-cube, .cube-face { width: 220px; height: 220px; }
+  .cf-front  { transform: translateZ(110px); }
+  .cf-back   { transform: rotateY(180deg) translateZ(110px); }
+  .cf-right  { transform: rotateY(90deg)  translateZ(110px); }
+  .cf-left   { transform: rotateY(-90deg) translateZ(110px); }
+  .cf-top    { transform: rotateX(90deg)  translateZ(110px); }
+  .cf-bottom { transform: rotateX(-90deg) translateZ(110px); }
+}
