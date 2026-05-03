@@ -40,23 +40,22 @@ const CursorFX = () => {
       m.x = e.clientX
       m.y = e.clientY
 
-      // Spawn particles proportional to velocity
+      // Spawn particles proportional to velocity (throttled)
       const speed = Math.hypot(m.vx, m.vy)
-      const count = Math.min(4, Math.floor(speed / 6))
+      const count = Math.min(2, Math.floor(speed / 10))
       for (let i = 0; i < count; i++) {
         particlesRef.current.push({
-          x: m.x + (Math.random() - 0.5) * 10,
-          y: m.y + (Math.random() - 0.5) * 10,
-          vx: (Math.random() - 0.5) * 2 + m.vx * 0.08,
-          vy: (Math.random() - 0.5) * 2 + m.vy * 0.08,
+          x: m.x + (Math.random() - 0.5) * 8,
+          y: m.y + (Math.random() - 0.5) * 8,
+          vx: (Math.random() - 0.5) * 1.5 + m.vx * 0.06,
+          vy: (Math.random() - 0.5) * 1.5 + m.vy * 0.06,
           life: 1,
-          size: Math.random() * 3 + 1.5,
+          size: Math.random() * 2.5 + 1.2,
           color: COLORS[(Math.random() * COLORS.length) | 0],
         })
       }
-      // Cap
-      if (particlesRef.current.length > 180) {
-        particlesRef.current.splice(0, particlesRef.current.length - 180)
+      if (particlesRef.current.length > 60) {
+        particlesRef.current.splice(0, particlesRef.current.length - 60)
       }
     }
     window.addEventListener('mousemove', onMove)
@@ -113,23 +112,6 @@ const CursorFX = () => {
         ctx.fill()
       }
 
-      // Constellation lines between close particles
-      ctx.lineWidth = 1
-      for (let i = 0; i < ps.length; i++) {
-        for (let j = i + 1; j < ps.length; j++) {
-          const dx = ps[i].x - ps[j].x
-          const dy = ps[i].y - ps[j].y
-          const d2 = dx * dx + dy * dy
-          if (d2 < 90 * 90) {
-            const alpha = (1 - d2 / (90 * 90)) * Math.min(ps[i].life, ps[j].life) * 0.4
-            ctx.strokeStyle = `rgba(180,160,255,${alpha})`
-            ctx.beginPath()
-            ctx.moveTo(ps[i].x, ps[i].y)
-            ctx.lineTo(ps[j].x, ps[j].y)
-            ctx.stroke()
-          }
-        }
-      }
       ctx.globalAlpha = 1
       ctx.globalCompositeOperation = 'source-over'
 

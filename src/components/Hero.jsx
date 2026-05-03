@@ -1,22 +1,62 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-const Hero = ({ scrollY }) => {
+const Hero = () => {
+  const videoRef = useRef(null)
+  const [videoReady, setVideoReady] = useState(false)
+
+  useEffect(() => {
+    const v = videoRef.current
+    if (!v) return
+    // Попытаться запустить видео как можно раньше (Safari/Chrome quirks)
+    const tryPlay = () => {
+      const p = v.play()
+      if (p && p.catch) p.catch(() => {})
+    }
+    if (v.readyState >= 2) {
+      setVideoReady(true)
+      tryPlay()
+    }
+    v.addEventListener('loadeddata', () => {
+      setVideoReady(true)
+      tryPlay()
+    })
+    v.addEventListener('canplay', tryPlay)
+  }, [])
+
   return (
     <section
       id="hero"
       className="relative min-h-screen flex items-center justify-center overflow-hidden px-6 md:px-10 pt-36 pb-20 [perspective:1200px]"
     >
+      {/* Мгновенный fallback-фон (виден пока видео грузится) */}
+      <div
+        className="absolute inset-0 z-[0]"
+        style={{
+          background:
+            'radial-gradient(ellipse at 30% 20%, rgba(124,92,255,0.6), transparent 60%),' +
+            'radial-gradient(ellipse at 70% 70%, rgba(255,62,165,0.5), transparent 60%),' +
+            'radial-gradient(ellipse at 50% 100%, rgba(0,224,255,0.35), transparent 70%),' +
+            'linear-gradient(160deg, #0a0618 0%, #05030d 100%)',
+        }}
+      />
+
       {/* Video background */}
       <div
-        className="absolute inset-0 z-[1] will-change-transform"
-        style={{
-          transform: `translateY(${scrollY * 0.3}px) scale(${1 + scrollY * 0.0005})`,
-        }}
+        className="hero-video-wrap absolute inset-0 z-[1] will-change-transform"
       >
         <video
-          className="w-full h-full object-cover [filter:saturate(1.2)_contrast(1.1)_brightness(0.7)]"
+          ref={videoRef}
+          className={`w-full h-full object-cover [filter:saturate(1.2)_contrast(1.1)_brightness(0.7)] transition-opacity duration-700 ${videoReady ? 'opacity-100' : 'opacity-0'}`}
           src="/video/Video 2.mp4"
-          autoPlay loop muted playsInline
+          autoPlay
+          loop
+          muted
+          defaultMuted
+          playsInline
+          preload="auto"
+          disablePictureInPicture
+          poster="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%237c5cff'/%3E%3Cstop offset='0.5' stop-color='%23ff3ea5'/%3E%3Cstop offset='1' stop-color='%2300e0ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='16' height='9' fill='url(%23g)'/%3E%3C/svg%3E"
+          onEnded={(e) => { e.currentTarget.currentTime = 0; e.currentTarget.play() }}
         />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(5,3,13,0.9)_90%)]" />
         <div className="absolute inset-0 bg-gradient-to-b from-[rgba(5,3,13,0.5)] to-[rgba(5,3,13,0.85)]" />
@@ -25,7 +65,6 @@ const Hero = ({ scrollY }) => {
       {/* Content */}
       <div
         className="relative z-[2] max-w-5xl text-center flex flex-col items-center gap-7 will-change-transform"
-        style={{ transform: `translateY(${-scrollY * 0.2}px)` }}
       >
         <span className="pill reveal">⚡ Новая эра 3D веба</span>
 

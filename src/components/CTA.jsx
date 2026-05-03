@@ -4,9 +4,9 @@ const TG_URL = 'https://t.me/anonimusnur'
 
 const CTA = () => {
   return (
-    <section id="contact" className="reveal relative z-[2] px-6 md:px-10 py-36">
+    <section id="contact" className="reveal relative z-[2] px-6 md:px-10 py-20">
       <div
-        className="mx-auto max-w-4xl rounded-[30px] border border-white/10 backdrop-blur-xl text-center px-6 md:px-10 py-20
+        className="mx-auto max-w-4xl rounded-[30px] border border-white/10 backdrop-blur-xl text-center px-6 md:px-10 py-16
                    [box-shadow:0_40px_80px_-30px_rgba(124,92,255,0.5)]
                    [background:radial-gradient(ellipse_at_top_left,rgba(124,92,255,0.35),transparent_60%),radial-gradient(ellipse_at_bottom_right,rgba(255,62,165,0.3),transparent_60%),linear-gradient(160deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01))]"
       >

@@ -11,7 +11,7 @@ const PROJECTS = [
 const VIDEO_SRC = '/video/Video 2.mp4'
 
 const VideoCube = () => (
-  <div className="showcase-stage reveal mx-auto mb-24 max-w-3xl h-[380px] md:h-[480px] flex items-center justify-center [perspective:1200px]">
+  <div className="showcase-stage reveal mx-auto mb-16 max-w-3xl h-[340px] md:h-[420px] flex items-center justify-center [perspective:1200px]">
     <div className="showcase-cube relative [transform-style:preserve-3d]">
       {['cf-front', 'cf-back', 'cf-right', 'cf-left', 'cf-top', 'cf-bottom'].map((cls) => (
         <video key={cls} className={`cube-face ${cls}`} src={VIDEO_SRC} autoPlay loop muted playsInline />
@@ -44,7 +44,7 @@ const ProjectCard = ({ project }) => (
 
 const Showcase = () => {
   return (
-    <section id="showcase" className="relative z-[2] px-6 md:px-10 py-36">
+    <section id="showcase" className="relative z-[2] px-6 md:px-10 py-20">
       <SectionHead
         tag="проекты"
         title={<>Работы, которые <span className="gradient-text">зажигают</span></>}

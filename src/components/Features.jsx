@@ -11,7 +11,7 @@ const FEATURES = [
 ]
 
 const SectionHead = ({ tag, title, subtitle }) => (
-  <div className="section-head reveal mx-auto mb-14 max-w-3xl flex flex-col items-center gap-4 text-center">
+  <div className="section-head reveal mx-auto mb-10 max-w-3xl flex flex-col items-center gap-4 text-center">
     <span className="pill">// {tag}</span>
     <h2 className="font-extrabold leading-[1.05] tracking-tight text-[clamp(36px,5vw,64px)]">
       {title}
@@ -45,7 +45,7 @@ const FeatureCard = ({ feature, index }) => (
 
 const Features = () => {
   return (
-    <section id="features" className="relative z-[2] px-6 md:px-10 py-36">
+    <section id="features" className="relative z-[2] px-6 md:px-10 py-20">
       <SectionHead
         tag="возможности"
         title={<>Технологии, от которых <span className="gradient-text">сносит крышу</span></>}
