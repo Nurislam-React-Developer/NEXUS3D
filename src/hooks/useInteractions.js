@@ -33,10 +33,20 @@ export function useRevealOnView(selector = '.reveal') {
           if (e.isIntersecting) e.target.classList.add('in-view')
         })
       },
-      { threshold: 0.15 }
+      { threshold: 0.05, rootMargin: '0px 0px -10% 0px' }
     )
     document.querySelectorAll(selector).forEach((el) => io.observe(el))
-    return () => io.disconnect()
+
+    // Failsafe: если по какой-то причине observer не сработал
+    // (HMR, late mount, уже-видимые элементы), через 1.5с показываем всё.
+    const failsafe = setTimeout(() => {
+      document.querySelectorAll(selector).forEach((el) => el.classList.add('in-view'))
+    }, 1500)
+
+    return () => {
+      clearTimeout(failsafe)
+      io.disconnect()
+    }
   }, [selector])
 }
 
