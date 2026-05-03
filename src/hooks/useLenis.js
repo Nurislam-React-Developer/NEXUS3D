@@ -7,11 +7,17 @@ gsap.registerPlugin(ScrollTrigger)
 
 export function useLenis() {
   useEffect(() => {
+    // На мобилках и при reduced-motion отключаем smooth scroll —
+    // нативный скролл намного быстрее.
+    const isReduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isSmall = window.innerWidth < 900
+    if (isReduced || isSmall) return
+
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.0,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       smoothWheel: true,
-      lerp: 0.1,
+      lerp: 0.12,
     })
 
     lenis.on('scroll', ScrollTrigger.update)
@@ -22,7 +28,6 @@ export function useLenis() {
     gsap.ticker.add(raf)
     gsap.ticker.lagSmoothing(0)
 
- 
     const refresh = () => ScrollTrigger.refresh()
     const t1 = setTimeout(refresh, 300)
     const t2 = setTimeout(refresh, 1500)

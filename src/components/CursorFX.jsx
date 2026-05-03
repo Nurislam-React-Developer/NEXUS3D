@@ -14,6 +14,11 @@ const CursorFX = () => {
   const rafRef = useRef(0)
 
   useEffect(() => {
+    // Отключаем эффект на мобильных, тач-устройствах и при reduced motion
+    const isTouch = matchMedia('(hover: none)').matches || matchMedia('(pointer: coarse)').matches
+    const isReduced = matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isSmall = window.innerWidth < 900
+    if (isTouch || isReduced || isSmall) return
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
 

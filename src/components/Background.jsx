@@ -8,17 +8,16 @@ const Background = ({ mouse }) => {
   return (
     <>
       <div className="bg-grid pointer-events-none fixed inset-0 z-0" />
+      {/* Один радиальный градиент вместо 3-х blur-орбов — НА ПОРЯДОК легче.
+          Нет blur(), нет painting, статичный paint. */}
       <div
-        className="bg-orb fixed z-0 rounded-full pointer-events-none opacity-60 blur-[70px] w-[400px] h-[400px] -top-32 -left-32 bg-[color:var(--accent)]"
-        style={{ ...parallax(0.15), animation: 'float1 14s ease-in-out infinite' }}
-      />
-      <div
-        className="bg-orb fixed z-0 rounded-full pointer-events-none opacity-60 blur-[70px] w-[380px] h-[380px] top-[40%] -right-36 bg-[color:var(--accent-2)]"
-        style={{ ...parallax(0.25), animation: 'float2 18s ease-in-out infinite' }}
-      />
-      <div
-        className="bg-orb fixed z-0 rounded-full pointer-events-none opacity-35 blur-[70px] w-[460px] h-[460px] -bottom-52 left-[30%] bg-[color:var(--accent-3)]"
-        style={{ ...parallax(0.1), animation: 'float3 22s ease-in-out infinite' }}
+        className="pointer-events-none fixed inset-0 z-0"
+        style={{
+          background:
+            'radial-gradient(circle at 15% 10%, rgba(124,92,255,0.35), transparent 50%),' +
+            'radial-gradient(circle at 85% 50%, rgba(255,62,165,0.30), transparent 50%),' +
+            'radial-gradient(circle at 40% 95%, rgba(0,224,255,0.20), transparent 55%)',
+        }}
       />
     </>
   )

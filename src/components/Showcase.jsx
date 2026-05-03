@@ -9,11 +9,34 @@ const PROJECTS = [
   { tag: 'Product', title: 'Glass Dimension', img: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800' },
 ]
 
+// Только 1 видео (на front), остальные грани — градиентные плашки.
+// Это убирает 5 лишних загрузок одного и того же 10MB файла.
 const VideoCube = () => (
   <div className="showcase-stage reveal mx-auto mb-16 max-w-3xl h-[340px] md:h-[420px] flex items-center justify-center [perspective:1200px]">
     <div className="showcase-cube relative [transform-style:preserve-3d]">
-      {['cf-front', 'cf-back', 'cf-right', 'cf-left', 'cf-top', 'cf-bottom'].map((cls) => (
-        <video key={cls} className={`cube-face ${cls}`} src={VIDEO_SRC} autoPlay loop muted playsInline />
+      <video
+        className="cube-face cf-front"
+        src={VIDEO_SRC}
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="metadata"
+      />
+      {['cf-back', 'cf-right', 'cf-left', 'cf-top', 'cf-bottom'].map((cls, i) => (
+        <div
+          key={cls}
+          className={`cube-face ${cls}`}
+          style={{
+            background: [
+              'linear-gradient(135deg, #7c5cff, #ff3ea5)',
+              'linear-gradient(135deg, #ff3ea5, #ffb84d)',
+              'linear-gradient(135deg, #00e0ff, #7c5cff)',
+              'linear-gradient(135deg, #ffb84d, #00e0ff)',
+              'linear-gradient(135deg, #ff3ea5, #00e0ff)',
+            ][i],
+          }}
+        />
       ))}
     </div>
   </div>
