@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
@@ -6,7 +6,7 @@ const IMAGES = [
   { url: 'https://images.unsplash.com/photo-1634986666676-ec8fd927c23d?w=900&q=75&auto=format', title: 'Neural Dreams', tag: '01 / AI Art' },
   { url: 'https://images.unsplash.com/photo-1614854262318-831574f15f1f?w=900&q=75&auto=format', title: 'Liquid Chrome', tag: '02 / 3D' },
   { url: 'https://images.unsplash.com/photo-1618172193763-c511deb635ca?w=900&q=75&auto=format', title: 'Neon Tokyo', tag: '03 / Motion' },
-  { url: 'https://images.unsplash.com/photo-1633354931133-27ac5f9b6cb9?w=900&q=75&auto=format', title: 'Crystal Worlds', tag: '04 / Render' },
+  { url: 'https://images.unsplash.com/photo-1604871000636-074fa5117945?w=900&q=75&auto=format', title: 'Crystal Worlds', tag: '04 / Render' },
   { url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=900&q=75&auto=format', title: 'Gradient Flow', tag: '05 / Art' },
   { url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=900&q=75&auto=format', title: 'Matrix', tag: '06 / Code' },
 ]
@@ -14,6 +14,8 @@ const IMAGES = [
 const HorizontalGallery = () => {
   const sectionRef = useRef(null)
   const trackRef = useRef(null)
+  const progressRef = useRef(null)
+  const [currentIdx, setCurrentIdx] = useState(0)
   const isMobile = typeof window !== 'undefined' && window.innerWidth < 900
 
   useEffect(() => {
@@ -26,7 +28,6 @@ const HorizontalGallery = () => {
 
       const getDistance = () => track.scrollWidth - window.innerWidth
 
-      // Используем force3D + translate3d для GPU acceleration
       gsap.to(track, {
         x: () => -getDistance(),
         ease: 'none',
@@ -35,11 +36,20 @@ const HorizontalGallery = () => {
           trigger: section,
           start: 'top top',
           end: () => `+=${getDistance()}`,
-          scrub: 1,           // лёгкий лаг = плавность + меньше работы на каждый кадр
+          scrub: 1,
           pin: true,
           anticipatePin: 1,
           invalidateOnRefresh: true,
-          fastScrollEnd: true, // оптимизация при быстром скролле
+          fastScrollEnd: true,
+          onUpdate: (self) => {
+            // Обновляем прогресс-бар
+            if (progressRef.current) {
+              progressRef.current.style.transform = `scaleX(${self.progress})`
+            }
+            // Обновляем номер текущего слайда
+            const idx = Math.min(IMAGES.length - 1, Math.floor(self.progress * IMAGES.length))
+            setCurrentIdx(idx)
+          },
         },
       })
     }, sectionRef)
@@ -87,12 +97,20 @@ const HorizontalGallery = () => {
       </div>
 
       {/* Прогресс-бар внизу */}
-      <div className="absolute bottom-8 left-10 right-10 z-10 flex items-center gap-3 pointer-events-none">
-        <span className="text-xs text-[color:var(--muted)] font-mono">01</span>
-        <div className="flex-1 h-[2px] bg-white/10 rounded-full overflow-hidden">
-          <div className="h-full w-1/6 bg-gradient-to-r from-[color:var(--accent)] to-[color:var(--accent-2)]" id="hg-progress" />
+      <div className="absolute bottom-8 left-10 right-10 z-10 flex items-center gap-4 pointer-events-none">
+        <span className="text-sm text-white font-mono font-bold tabular-nums w-8">
+          {String(currentIdx + 1).padStart(2, '0')}
+        </span>
+        <div className="flex-1 h-[3px] bg-white/10 rounded-full overflow-hidden">
+          <div
+            ref={progressRef}
+            className="h-full w-full origin-left bg-gradient-to-r from-[color:var(--accent)] via-[color:var(--accent-2)] to-[color:var(--accent-3)]"
+            style={{ transform: 'scaleX(0)', willChange: 'transform' }}
+          />
         </div>
-        <span className="text-xs text-[color:var(--muted)] font-mono">06</span>
+        <span className="text-sm text-[color:var(--muted)] font-mono w-8 text-right">
+          {String(IMAGES.length).padStart(2, '0')}
+        </span>
       </div>
 
       <div
